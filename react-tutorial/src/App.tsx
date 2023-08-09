@@ -1,21 +1,13 @@
 import React from 'react';
+import Game from "./components/Game"
 
 import logo from './logo.svg';
 import './App.css';
 
-
-function Square(value: string) {
-  return (
-    <button className="square">
-      {value}
-    </button>
-  );
-}
-
 function App() {
   return (
     <div className="App">
-      <button className="square">X</button>
+      <Game />
     </div>
   );
 }
