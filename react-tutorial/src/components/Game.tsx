@@ -11,7 +11,7 @@ function Square(Props: SquareProps) {
     return <button onClick={Props.onSquareClick}> {Props.value} </button>;
 }
 
-function calcWinner(squares: Array<SquareProps>) {
+function calcWinner(squares: Array<ValueType>) {
     const lines: Array<Array<number>> = [
         [0, 1, 2],
         [3, 4, 5],
@@ -32,9 +32,18 @@ function calcWinner(squares: Array<SquareProps>) {
     return null;
 }
 
-function Board() {
-    const [xIsNext, setIsNext] = useState(true);
-    const [squares, setSquares] = useState(Array(9).fill(null));
+type BordProps = {
+    xIsNext: boolean,
+    squares: ValueType[],
+    onPlay: (nextSquares: ValueType[]) => void;
+}
+
+function Board(Props: BordProps) {
+    // const [xIsNext, setIsNext] = useState(true);
+    // const [squares, setSquares] = useState(Array(9).fill(null));
+
+    let squares: ValueType[] = Props.squares;
+    let xIsNext = Props.xIsNext;
 
     function handleClick(i: number) {
         if(squares[i]) {
@@ -47,8 +56,9 @@ function Board() {
         }else {
             nextSquares[i] = "O"
         }
-        setSquares(nextSquares);
-        setIsNext(!xIsNext);
+        // setSquares(nextSquares);
+        // setIsNext(!xIsNext);
+        Props.onPlay(nextSquares);
     }
 
     const winner = calcWinner(squares);
@@ -82,16 +92,26 @@ function Board() {
 }
 
 function Game() {
-  return (
-    <div className="game">
-        <div className='game-bord'>
-            <Board />
+    const [xIsNext, setXIsNext] = useState(true);
+    const [history, setHistory] = useState([Array(9).fill(null)]);
+    const currentSquares = history[history.length - 1];
+
+    function handlePlay(nextSquares: ValueType[]) {
+        setHistory([...history, nextSquares]);
+        setXIsNext(!xIsNext);
+        console.log(history);
+    }
+    
+    return (
+        <div className="game">
+            <div className='game-bord'>
+                <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
+            </div>
+            <div className='game-info'>
+                <ol>{/* todo */}</ol>
+            </div>
         </div>
-        <div className='game-info'>
-            <ol>{/* todo */}</ol>
-        </div>
-    </div>
-  );
+    );
 }
 
 export default Game;
