@@ -92,15 +92,38 @@ function Board(Props: BordProps) {
 }
 
 function Game() {
-    const [xIsNext, setXIsNext] = useState(true);
     const [history, setHistory] = useState([Array(9).fill(null)]);
-    const currentSquares = history[history.length - 1];
+    const [currentMove, setCurrentMove] = useState<number>(0);
+    const xIsNext = currentMove % 2 === 0;
+    const currentSquares = history[currentMove];
+
 
     function handlePlay(nextSquares: ValueType[]) {
-        setHistory([...history, nextSquares]);
-        setXIsNext(!xIsNext);
-        console.log(history);
+        const nextHistry = [...history.splice(0, currentMove + 1), nextSquares];
+        setHistory(nextHistry);
+        console.log(nextHistry);
+        
+        setCurrentMove(nextHistry.length - 1);
+        console.log(currentMove);
     }
+
+    function jumpTo(nextMove: number) {
+        setCurrentMove(nextMove);
+    }
+
+    const moves = history.map((squares, move) => {
+        let description: string;
+        if(move > 0) {
+            description = 'Go to move #' + move;
+        }else {
+            description = "Go to game start";
+        }
+        return (
+            <li key={move}>
+                <button onClick={() => jumpTo(move)}>{description}</button>
+            </li>
+        )
+    })
     
     return (
         <div className="game">
@@ -108,7 +131,7 @@ function Game() {
                 <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
             </div>
             <div className='game-info'>
-                <ol>{/* todo */}</ol>
+                <ol>{moves}</ol>
             </div>
         </div>
     );
